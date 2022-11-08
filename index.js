@@ -68,6 +68,7 @@ const accessLogStream = fs.createWriteStream(path.join(__dirname, 'log.txt'), {f
 
 //logger
 app.use(morgan('combined', {stream: accessLogStream}));
+//public
 app.use(express.static('public'));
 
 
@@ -79,6 +80,7 @@ app.get('/movies', (req, res) => {
     res.send(topMovies);
 });
 
+//ERROR
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).send('Error');
