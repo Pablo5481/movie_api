@@ -10,7 +10,11 @@ const topMovies = [
     {
         title: 'Gravity',
         director: 'Alfonso Cuaron',
-        year: 2013
+        year: 2013,
+        genre: 'Thriller',
+        description: 'This film is about a woman and man in space who work together to make it back to Earth safely after a disaster.',
+        imageURL: 'url to image',
+        featured: 'yes'
     },
     {
         title: 'Contact',
@@ -79,6 +83,15 @@ app.get('/', (req,res) => {
 app.get('/movies', (req, res) => {
     res.send(topMovies);
 });
+
+/*
+
+
+
+
+
+
+*/
 
 //ERROR
 app.use((err, req, res, next) => {

@@ -12,6 +12,191 @@
     <p>
         This API is meant to get information for users about films in the futuristic genre.
     </p>
+
+    <h2>API Features</h2>
+
+    <p>
+      <li>
+       Return a list of ALL movies to the user
+      </li>
+
+      <li>
+        Return data (description, genre, director, image URL, whether it is featured or not) about a single movie by title to the user
+      </li>
+
+      <li>
+        Return data about a genre (description) by name/title (e.g. "Thriller")
+      </li>
+
+      <li>
+        Return data about a director (bio, birth year, death year) by name
+      </li>
+
+      <li>
+        Allow new users to register
+      </li>
+
+      <li>
+        Allow users to update their user info (username)
+      </li>
+
+      <li>
+        Allow users to add a movie to their list of favorites (showing only a text that a movie has been added)
+      </li>
+
+      <li>
+        Allow users to remove a movie from their list of favorites (showing only a text that a movie has been removed)
+      </li>
+      <li>
+        Allow existing users to deregister (showing only a text that a user email has been removed)
+      </li>
+    </p>
+
+    <h3>API Endpoints</h3>
+
+    <!--
+      <th>Business Logic</tr>
+      <th>URL</th>
+      <th>HTTP Method</th>
+      <th>Query Parameters</th>
+      <th>Request Body Data Format</th>
+      <th>Response Body Data Format</th>
+    -->
+
+    <!--
+  <table>
+    <tbody>
+
+      <tr>
+        <td>Return All Movies</td>
+        <td>/movies</td>
+        <td>get</td>
+        <td>-</td>
+        <td>-</td>
+        <td>JSON object response with all movies</td>
+      </tr>
+
+      <tr>
+        <td>Return data about a single movie</td>
+        <td>/movies/:title</td>
+        <td>get</td>
+        <td>:title</td>
+        <td>-</td>
+        <td>
+          {
+        title: 'Gravity',
+        director: 'Alfonso Cuaron',
+        year: 2013,
+        genre: 'Thriller',
+        description: 'This film is about a woman and man in space who work together to make it back to Earth safely after a disaster.',
+        imageURL: 'url to image',
+        featured: 'yes'
+        }
+        </td>
+      </tr>
+
+      <tr>
+        <td>Return Genre By Name</td>
+        <td>/movies/:genre</td>
+        <td>get</td>
+        <td>:genre</td>
+        <td>-</td>
+        <td>
+          {
+          genre: 'Thriller'
+        }
+        </td>
+      </tr>
+
+      <tr>
+        <td>Return Director By Name</td>
+        <td>/movies/:director</td>
+        <td>get</td>
+        <td>:director</td>
+        <td>-</td>
+        <td>
+          {
+          director: 'Alfonso Cuaron'
+        }
+        </td>
+      </tr>
+
+      <tr>
+        <td>Allow New Users To Register</td>
+        <td>/users</td>
+        <td>post</td>
+        <td>-</td>
+        <td>
+          {
+          name: 'Pablo Coronel'
+        }
+        </td>
+        <td>
+          {
+          name: 'Pablo Coronel',
+          id: 198273
+        }
+        </td>
+      </tr>
+
+      <tr>
+        <td>ALlow users to update their user info</td>
+        <td>/users/:name</td>
+        <td>post</td>
+        <td>:name</td>
+        <td>
+          {
+          name: 'Sifat Harun'
+        }
+        </td>
+        <td>
+          {
+          name: 'Sifat Harun',
+          id: 187424
+        }
+        </td>
+      </tr>
+
+      <tr>
+        <td>Allow Users to add a movie to  favorites</td>
+        <td>/movies/id/:title</td>
+        <td>post</td>
+        <td>:id, :title</td>
+        <td>
+          {
+          title: 'titanic'
+        }
+        </td>
+        <td>
+          {
+          title: 'titanic'
+        }
+        </td>
+      </tr>
+
+      <tr>
+        <td>Allow users to remove a movie from favorites</td>
+        <td>/users/id/:title</td>
+        <td>delete</td>
+        <td>:id, :title</td>
+        <td>-</td>
+        <td>Message indicating succesfully removed</td>
+      </tr>
+
+      <tr>
+        <td>Allow existing users to deregister</td>
+        <td>/users/:name</td>
+        <td>delete</td>
+        <td>:name</td>
+        <td>-</td>
+        <td>Message indicating succesfully removed</td>
+      </tr>
+    </tbody>
+
+  </table>
+
+  -->
+
   </body>
 </html>
 
