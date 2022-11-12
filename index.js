@@ -250,25 +250,6 @@ app.get('/movies/director/:director', (req, res) => {
     }
 });
 
-/*
-
-*/
-
-
-/*
-
-
-
-
-
-
-
-//user removed
-
-
-
-
-*/
 
 //ERROR
 app.use((err, req, res, next) => {
