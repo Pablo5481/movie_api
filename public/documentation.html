@@ -55,7 +55,7 @@
     <h3>API Endpoints</h3>
 
    
-      <th>Business Logic</tr>
+      <th>Business Logic</th>
       <th>URL</th>
       <th>HTTP Method</th>
       <th>Query Parameters</th>
@@ -67,6 +67,95 @@
   <table>
     <tbody>
 
+      <!--CREATE-->
+
+      <tr>
+        <td>Add New User</td>
+        <td>/users</td>
+        <td>post</td>
+        <td>-</td>
+        <td>
+          {
+          name: 'Pablo Coronel'
+        }
+        </td>
+        <td>
+          {
+          name: 'Pablo Coronel',
+          id: 198273
+        }
+        </td>
+      </tr>
+
+      <tr>
+        <td>Add a movie to user favorites</td>
+        <td>/movies/id/:title</td>
+        <td>post</td>
+        <td>:id, :title</td>
+        <td>
+          {
+          title: 'titanic'
+        }
+        </td>
+        <td>
+          {
+          title: 'titanic'
+        }
+        </td>
+      </tr>
+
+      <!--DELETE-->
+
+      <tr>
+        <td>Delete movie from favorites</td>
+        <td>/users/id/:title</td>
+        <td>delete</td>
+        <td>:id, :title</td>
+        <td>-</td>
+        <td>Message indicating succesfully removed</td>
+      </tr>
+
+      <tr>
+        <td>Delete existing user</td>
+        <td>/users/:name</td>
+        <td>delete</td>
+        <td>:name</td>
+        <td>-</td>
+        <td>Message indicating succesfully removed</td>
+      </tr>
+    </tbody>
+
+    <!--UPDATE-->
+
+      <tr>
+        <td>Update user info</td>
+        <td>/users/:name</td>
+        <td>put</td>
+        <td>:name</td>
+        <td>
+          {
+          name: 'Sifat Harun'
+        }
+        </td>
+        <td>
+          {
+          name: 'Sifat Harun',
+          id: 187424
+        }
+        </td>
+      </tr>
+
+      <!--READ-->
+
+      <tr>
+        <td>Return Homepage</td>
+        <td>/</td>
+        <td>get</td>
+        <td>-</td>
+        <td>-</td>
+        <td>Homepage</td>
+      </tr>
+
       <tr>
         <td>Return All Movies</td>
         <td>/movies</td>
@@ -74,6 +163,15 @@
         <td>-</td>
         <td>-</td>
         <td>JSON object response with all movies</td>
+      </tr>
+
+      <tr>
+        <td>Return All Users</td>
+        <td>/Users</td>
+        <td>get</td>
+        <td>-</td>
+        <td>-</td>
+        <td>JSON object response with all Users</td>
       </tr>
 
       <tr>
@@ -121,82 +219,7 @@
         </td>
       </tr>
 
-      <tr>
-        <td>Allow New Users To Register</td>
-        <td>/users</td>
-        <td>post</td>
-        <td>-</td>
-        <td>
-          {
-          name: 'Pablo Coronel'
-        }
-        </td>
-        <td>
-          {
-          name: 'Pablo Coronel',
-          id: 198273
-        }
-        </td>
-      </tr>
-
-      <tr>
-        <td>ALlow users to update their user info</td>
-        <td>/users/:name</td>
-        <td>post</td>
-        <td>:name</td>
-        <td>
-          {
-          name: 'Sifat Harun'
-        }
-        </td>
-        <td>
-          {
-          name: 'Sifat Harun',
-          id: 187424
-        }
-        </td>
-      </tr>
-
-      <tr>
-        <td>Allow Users to add a movie to favorites</td>
-        <td>/movies/id/:title</td>
-        <td>post</td>
-        <td>:id, :title</td>
-        <td>
-          {
-          title: 'titanic'
-        }
-        </td>
-        <td>
-          {
-          title: 'titanic'
-        }
-        </td>
-      </tr>
-
-      <tr>
-        <td>Allow users to remove a movie from favorites</td>
-        <td>/users/id/:title</td>
-        <td>delete</td>
-        <td>:id, :title</td>
-        <td>-</td>
-        <td>Message indicating succesfully removed</td>
-      </tr>
-
-      <tr>
-        <td>Allow existing users to deregister</td>
-        <td>/users/:name</td>
-        <td>delete</td>
-        <td>:name</td>
-        <td>-</td>
-        <td>Message indicating succesfully removed</td>
-      </tr>
-    </tbody>
-
   </table>
-
-  
-
   </body>
 </html>
 
