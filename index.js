@@ -1,4 +1,10 @@
+const mongoose = require('mongoose');
+const Models = require('./models.js');
 
+const Movies = Models.Movie;
+const Users = Models.User;
+
+mongoose.connect('mongodb://localhost:27017/myFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
 const express = require('express'),
     morgan = require('morgan'),
     fs = require('fs'),
@@ -9,121 +15,8 @@ const express = require('express'),
     
 
 const app = express();
-
-let users = [
-    {
-        name: 'Sifat Harun',
-        id: 1,
-        favoriteMovies: []
-    },
-    {
-        name: 'Pablo Coronel',
-        id: 2,
-        favoriteMovies: []
-    }
-];
-
-let movies = [
-    {
-        title: 'Gravity',
-        director: 'Alfonso Cuaron',
-        year: 2013,
-        genre: 'Thriller',
-        description: 'This film is about a woman and man in space who work together to make it back to Earth safely after a disaster.',
-        imageURL: 'url to image',
-        featured: 'yes'
-    },
-    {
-        title: 'Contact',
-        director: 'Robert Zemeckis',
-        year: 2002,
-        genre: 'Sci-fi',
-        description: 'This film is about a woman and man in space who work together to make it back to Earth safely after a disaster.',
-        imageURL: 'url to image',
-        featured: 'yes'
-    },
-    {
-        title: 'Minority Report',
-        director: 'Steven Spielbergs',
-        year: 1997,
-        genre: 'Action',
-        description: 'This film is about a woman and man in space who work together to make it back to Earth safely after a disaster.',
-        imageURL: 'url to image',
-        featured: 'no'
-    },
-    {
-        title: '2001: A Space Odyssey',
-        director: 'Stanley Kubrick',
-        year: 1968,
-        genre: 'Sci-fi',
-        description: 'This film is about a woman and man in space who work together to make it back to Earth safely after a disaster.',
-        imageURL: 'url to image',
-        featured: 'no'
-    },
-    {
-        title: 'Escape From New York',
-        director: 'John Carpenter',
-        year: 1991,
-        genre: 'Action',
-        description: 'This film is about a woman and man in space who work together to make it back to Earth safely after a disaster.',
-        imageURL: 'url to image',
-        featured: 'yes'
-    },
-    {
-        title: 'Dune',
-        director: 'Denis Villenueve',
-        year: 2021,
-        genre: 'Sci-fi',
-        description: 'This film is about a woman and man in space who work together to make it back to Earth safely after a disaster.',
-        imageURL: 'url to image',
-        featured: 'no'
-    },
-    {
-        title: 'Close Encounters of the Third Kind',
-        director: 'Steven Speilberg',
-        year: 1977,
-        genre: 'Thriller',
-        description: 'This film is about a woman and man in space who work together to make it back to Earth safely after a disaster.',
-        imageURL: 'url to image',
-        featured: 'yes'
-    },
-    {
-        title: 'Alien',
-        director: 'Ridley Scott',
-        year: 1979,
-        genre: 'Thriller',
-        description: 'This film is about a woman and man in space who work together to make it back to Earth safely after a disaster.',
-        imageURL: 'url to image',
-        featured: 'yes'
-    },
-    {
-        title: 'Scanners',
-        director: 'David Cronenberg',
-        year: 1981,
-        genre: 'Action',
-        description: 'This film is about a woman and man in space who work together to make it back to Earth safely after a disaster.',
-        imageURL: 'url to image',
-        featured: 'yes'
-    },
-    {
-        title: 'Blade Runner',
-        director: 'Ridley Scott',
-        year: 1997,
-        genre: 'Sci-fi',
-        description: 'This film is about a woman and man in space who work together to make it back to Earth safely after a disaster.',
-        imageURL: 'url to image',
-        featured: 'yes'
-    },
-    {
-        title: 'Back to the Future',
-        director: 'Robert Zemeckis',
-        year: 1985,
-        genre: 'Action',
-        description: 'This film is about a woman and man in space who work together to make it back to Earth safely after a disaster.',
-        imageURL: 'url to image',
-        featured: 'no'
-    }
-];
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true}));
 
 const accessLogStream = fs.createWriteStream(path.join(__dirname, 'log.txt'), {flags:'a'})
 
@@ -132,122 +25,196 @@ app.use(morgan('combined', {stream: accessLogStream}));
 //public
 app.use(express.static('public'));
 
-app.use(bodyParser.json());
-
 //CREATE 
+
+/*
+{
+    ID: Integer,
+    Username: String, 
+    Password: String,
+    Email: String,
+    Birthday: Date
+}*/
+//allow new user to register
 app.post('/users', (req, res) => {
-    const newUser = req.body;
+    Users.findOne({ Username: req.body.Username })
+        .then((user) => {
+            if (user) {
+                return res.status(400).send(req.body.Username + 'already exists');
+            } else {
+              Users
+                .create({
+                    Username: req.body.Username,
+                    Password: req.body.Password,
+                    Email: req.body.Email,
+                    Birthday: req.body.Birthday
+                })
+                .then((user) =>{res.status(201).json(user)
+                })
+              .catch((error) => {
+                console.error(error);
+                res.status(500).send('Error: ' + error);
+              })
+            }   
+          })
+          .catch((error) => {
+            console.error(error);
+            res.status(500).send('Error: ' + error);
+          });
+        });
 
-    if (newUser.name) {
-       newUser.id = uuid.v4();
-        users.push(newUser);
-        res.status(201).json(newUser)
-    } else {
-        res.status(400).send('user needs name')
-    }
-});
 
-app.post('/users/:id/:movieTitle', (req, res) => {
-    const { id, movieTitle } = req.params; 
-
-    let user = users.find( user => user.id == id);
-
-    if (user) {
-        user.favoriteMovies.push(movieTitle);
-        res.status(200).json(user);
-    } else {
-        res.status(400).send('no such movie')
-    }
-});
 
 //DELETE
 
+//delete a user by username
+app.delete('/users/:username', (req, res) => {
+    Users.findOneAndRemove({ Username: req.params.Username })
+    .then ((user) => {
+        if (!user) {
+            res.status(400).send(req.params.Username + 'was not found');
+        } else {
+            res.status(200).send(req.params.Username + ' was deleted.');
+        }
+    })
+    .catch((err) => {
+        console.error(err);
+        res.status(500).send('Error ' + err);
+    });
+});
+
+//allow users to delete from list of faves
 app.delete('/users/:id/:movieTitle', (req, res) => {
-    const { id, movieTitle } = req.params; 
-
-    let user = users.find( user => user.id == id);
-
-    if (user) {
-        user.favoriteMovies = user.favoriteMovies.filter( title => title !== movieTitle);
-        res.status(200).json(user);
-    } else {
-        res.status(400).send('no such user')
-    }
-});
-
-app.delete('/users/:id', (req, res) => {
-    const { id } = req.params; 
-
-    let user = users.find( user => user.id == id);
-
-    if (user) {
-        users = users.filter( user => user.id != id);
-        res.status(200).send('user has been deleted');
-    } else {
-        res.status(400).send('no such user')
-    }
-});
+    Users.findOneAndRemove({ Username: req.params.Username}, {$pull: { FavoriteMovies: req.param.MovieID }, 
+    },
+    {new: true},
+    (err, updatedUser) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Error ' + err);
+        } else {
+            res.json(updatedUser);
+          }
+        });
+    });
 
 //UPDATE 
-app.put('/users/:id', (req, res) => {
-    const { id } = req.params;
-    const updatedUser = req.body;
 
-    let user = users.find( user => user.id == id );
-
-    if (user) {
-        user.name = updatedUser.name;
-        res.status(201).send(user)
-    } else {
-        res.status(400).send('no such user')
-    }
+//update user info
+app.put('/users/:Username', (req, res) => {
+    Users.findOneAndUpdate({ Username: req.params.Username }, { $set:
+      {
+        Username: req.body.Username,
+        Password: req.body.Password,
+        Email: req.body.Email,
+        Birthday: req.body.Birthday
+      }
+    },
+    { new: true }, // this line makes sure that the updated document is returned
+    (err, updatedUser) => {
+        if(err) {
+            console.error(err);
+            res.status(500).send('Error: ' + err);
+        } else {
+            res.json(updatedUser);
+        }
+    });
 });
+
+//add movie a users list of faves
+app.post('/users/:Username/movies/:MovieID', (req, res) => {
+    Users.findOneAndUpdate({ Username: req.params.Username }, {
+        $push: { FavoriteMovies: req.params.MovieID }
+    },
+    { new: true }, //this line makes sure that the updated document is returned 
+    (err, updatedUser) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Error: ' + err);
+        } else {
+            res.json(updatedUser);
+        }
+        });
+    });
 
 
 // READ 
+
+//get all users
+app.get('/users', (req, res) => {
+    Users.find()
+      .then((users) => {
+        res.status(201).json(users);
+      })
+      .catch((err) => {
+        console.error(err);
+        res.status(500).send('Error: ' + err);
+      });
+});
+
+//get a user by username
+app.get('/users/:Username', (req, res) => {
+    Users.findOne({ Username: req.params.Username })
+        .then((user) => {
+            res.json(user);
+        })
+        .catch((err) => {
+            console.error(err);
+            res.status(500).send('Error: ' + err);
+        });
+});
+
+//get homepage
 app.get('/', (req,res) => {
     res.send('Welcome to my Futuristic Film Catalog!');
 });
 
+//get users list of all movies
 app.get('/movies', (req, res) => {
-    res.status(200).json(movies);
+    Movies.find()
+    .then((movies) => {
+        res.json(movies);
+    })
+    .catch((err) => {
+        console.error(err);
+        res.status(500).send('Error: ' + err);
+    });
 });
 
-app.get('/users', (req, res) => {
-    res.status(200).json(users);
+//get specific movie title 
+app.get('/movies/:Title', (req, res) => {
+    Movies.findOne({ Title: req.params.Title })
+        .then((movie) => {
+            res.json(movie);
+        })
+        .catch((err) => {
+            console.error(err);
+            res.status(500).send('No Such Film');
+        });
+});
+  
+//get specific genre
+app.get('/movies/genre/:genreName', (req, res) => {
+    Movies.findOne({ 'Genre.Name': req.params.genreName })
+        .then((movie) => {
+            res.status(201).json(movie.genre);
+        })
+        .catch((err) => {
+            console.error(err);
+            res.status(500).send('No such Genre!');
+        });
 });
 
-app.get('/movies/:title', (req, res) => {
-    const { title } = req.params;
-    const topMovies = movies.find( movie => movie.title === title );
-
-    if (topMovies) {
-        res.status(200).json(topMovies);
-    } else {
-        res.status(400).send('no such movie')
-    }
-});
-    
-app.get('/movies/genre/:genre', (req, res) => {
-    const { genre } = req.params;
-    const genreName = movies.find( movie => movie.genre === genre ).genre;
-
-    if (genreName) {
-        res.status(200).json(genreName);
-    } else {
-        res.status(400).send('no such genre')
-    }
-});
-
-app.get('/movies/director/:director', (req, res) => {
-    const { director } = req.params;
-    const directorName = movies.find( movie => movie.director === director ).director;
-
-    if (directorName) {
-        res.status(200).json(directorName);
-    } else {
-        res.status(400).send('no such director')
-    }
+//get specific director
+app.get('/movies/director/:directorName', (req, res) => {
+    Movies.findOne({'Director.Name': req.params.directorName })
+        .then((movie) => {
+            res.status(201).json(movie.Director);
+        })
+        .catch((err) => {
+            console.error(err);
+            res.status(500).send('Director not in archives');
+        });
 });
 
 
