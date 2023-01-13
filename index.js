@@ -40,7 +40,7 @@ app.post('/users', (req, res) => {
     Users.findOne({ Username: req.body.Username })
         .then((user) => {
             if (user) {
-                return res.status(400).send(req.body.Username + 'already exists');
+                return res.status(400).send(req.body.Username + ' already exists');
             } else {
               Users
                 .create({
@@ -68,7 +68,7 @@ app.post('/users', (req, res) => {
 //DELETE
 
 //delete a user by username
-app.delete('/users/:username', (req, res) => {
+app.delete('/users/:Username', (req, res) => {
     Users.findOneAndRemove({ Username: req.params.Username })
     .then ((user) => {
         if (!user) {
@@ -84,10 +84,11 @@ app.delete('/users/:username', (req, res) => {
 });
 
 //allow users to delete from list of faves
-app.delete('/users/:id/:movieTitle', (req, res) => {
-    Users.findOneAndRemove({ Username: req.params.Username}, {$pull: { FavoriteMovies: req.param.MovieID }, 
+app.delete('/users/:Username/movies/:MovieID', (req, res) => {
+    Users.findOneAndUpdate({ Username: req.params.Username }, {
+        $pull: { FavoriteMovies: req.params.MovieID } 
     },
-    {new: true},
+    { new: true },
     (err, updatedUser) => {
         if (err) {
             console.error(err);
@@ -185,7 +186,7 @@ app.get('/movies', (req, res) => {
 app.get('/movies/:Title', (req, res) => {
     Movies.findOne({ Title: req.params.Title })
         .then((movie) => {
-            res.json(movie);
+            res.status(201).json(movie);
         })
         .catch((err) => {
             console.error(err);
@@ -201,7 +202,7 @@ app.get('/movies/genre/:genreName', (req, res) => {
         })
         .catch((err) => {
             console.error(err);
-            res.status(500).send('No such Genre!');
+            res.status(500).send('Test!');
         });
 });
 
