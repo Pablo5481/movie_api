@@ -106,7 +106,7 @@ app.delete('/users/:Username/movies/:MovieID', passport.authenticate('jwt', { se
 //UPDATE 
 
 //update user info
-app.put('/users/:Username', (req, res) => {
+app.put('/users/:Username', passport.authenticate('jwt', { session: false }), (req, res) => {
     Users.findOneAndUpdate({ Username: req.params.Username }, { $set:
       {
         Username: req.body.Username,
@@ -199,7 +199,7 @@ app.get('/movies/:Title', passport.authenticate('jwt', { session: false}), (req,
 });
   
 //get specific genre
-app.get('/movies/genre/:Name', (req, res) => {
+app.get('/movies/genre/:Name', passport.authenticate('jwt', { session: false }), (req, res) => {
     console.log(req)
     Movies.findOne({ 'Genre.Name': req.params.Name })
         .then((movie) => {
@@ -207,7 +207,7 @@ app.get('/movies/genre/:Name', (req, res) => {
         })
         .catch((err) => {
             console.error(err);
-            res.status(500).send('Test!');
+            res.status(500).send('No Such Genre!');
         });
 });
 
