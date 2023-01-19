@@ -688,3 +688,7 @@ Timestamp: Mon Nov 07 2022 10:37:53 GMT-0500 (Eastern Standard Time)
 127.0.0.1 - - [18/Jan/2023:23:13:57 +0000] "POST /users HTTP/1.1" 500 5 "-" "PostmanRuntime/7.30.0"
 127.0.0.1 - - [18/Jan/2023:23:14:14 +0000] "POST /users HTTP/1.1" 500 5 "-" "PostmanRuntime/7.30.0"
 ::1 - - [18/Jan/2023:23:24:18 +0000] "POST /users HTTP/1.1" 201 180 "-" "PostmanRuntime/7.30.0"
+::1 - - [18/Jan/2023:23:55:36 +0000] "POST /users HTTP/1.1" 400 30 "-" "PostmanRuntime/7.30.0"
+::1 - - [18/Jan/2023:23:55:47 +0000] "POST /users HTTP/1.1" 201 179 "-" "PostmanRuntime/7.30.0"
+127.0.0.1 - - [19/Jan/2023:00:20:41 +0000] "POST /movies HTTP/1.1" 404 146 "-" "PostmanRuntime/7.30.0"
+127.0.0.1 - - [19/Jan/2023:00:20:47 +0000] "GET /movies HTTP/1.1" 401 - "-" "PostmanRuntime/7.30.0"

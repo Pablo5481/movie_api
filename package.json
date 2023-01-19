@@ -2,8 +2,13 @@
   "name": "my-first-package",
   "version": "1.0.0",
   "scripts": {
-    "start": "node index.js --watch"
-  },
+    "dev": "react-scripts start",
+    "start": "serve -s build",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "heroku-postbuild": "npm run build"
+    },
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -30,6 +35,7 @@
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
+    "serve": "^14.1.2",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
