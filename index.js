@@ -4,8 +4,8 @@ const Models = require('./models.js');
 const Movies = Models.Movie;
 const Users = Models.User;
 
-//mongoose.connect('mongodb://localhost:27017/myFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
-mongoose.connect( CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb://localhost:27017/myFlixDB', { useNewUrlParser: true, useUnifiedTopology: true });
+//mongoose.connect('mongodb+srv://Pablo5481:<test123>@myflixdb.herjwuu.mongodb.net/myFlixDB?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true });
 
 const express = require('express'),
     morgan = require('morgan'),
@@ -20,6 +20,9 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true}));
 
+const { check, validationResult } = require('express-validator');
+
+
 const accessLogStream = fs.createWriteStream(path.join(__dirname, 'log.txt'), {flags:'a'})
 
 //logger
@@ -28,18 +31,7 @@ app.use(morgan('combined', {stream: accessLogStream}));
 app.use(express.static('public'));
 
 const cors = require('cors');
-let allowedOrigins = ['http://localhost:8080', 'http://testsite.com'];
-
-app.use(cors({
-  origin: (origin, callback) => {
-    if(!origin) return callback(null, true);
-    if(allowedOrigins.indexOf(origin) === -1){ // If a specific origin isn’t found on the list of allowed origins
-      let message = 'The CORS policy for this application doesn’t allow access from origin ' + origin;
-      return callback(new Error(message ), false);
-    }
-    return callback(null, true);
-  }
-}));
+app.use(cors());
 
 //imported auth.js
 let auth = require('./auth')(app);
@@ -60,51 +52,51 @@ require('./passport');
 //allow new user to register
 
 app.post('/users',
-// Validation logic here for request
-//you can either use a chain of methods like .not().isEmpty()
-//which means "opposite of isEmpty" in plain english "is not empty"
-//or use .isLength({min: 5}) which means
-//minimum value of 5 characters are only allowed
-[
-  check('Username', 'Username is required').isLength({min: 5}),
-  check('Username', 'Username contains non alphanumeric characters - not allowed.').isAlphanumeric(),
-  check('Password', 'Password is required').not().isEmpty(),
-  check('Email', 'Email does not appear to be valid').isEmail()
-], (req, res) => {
+  // Validation logic here for request
+  //you can either use a chain of methods like .not().isEmpty()
+  //which means "opposite of isEmpty" in plain english "is not empty"
+  //or use .isLength({min: 5}) which means
+  //minimum value of 5 characters are only allowed
+  [
+    check('Username', 'Username is required').isLength({min: 5}),
+    check('Username', 'Username contains non alphanumeric characters - not allowed.').isAlphanumeric(),
+    check('Password', 'Password is required').not().isEmpty(),
+    check('Email', 'Email does not appear to be valid').isEmail()
+  ], (req, res) => {
 
-// check the validation object for errors
-  let errors = validationResult(req);
+  // check the validation object for errors
+    let errors = validationResult(req);
 
-  if (!errors.isEmpty()) {
-    return res.status(422).json({ errors: errors.array() });
-  }
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() });
+    }
 
-  let hashedPassword = Users.hashPassword(req.body.Password);
-  Users.findOne({ Username: req.body.Username }) // Search to see if a user with the requested username already exists
-    .then((user) => {
-      if (user) {
-        //If the user is found, send a response that it already exists
-        return res.status(400).send(req.body.Username + ' already exists');
-      } else {
-        Users
-          .create({
-            Username: req.body.Username,
-            Password: hashedPassword,
-            Email: req.body.Email,
-            Birthday: req.body.Birthday
-          })
-          .then((user) => { res.status(201).json(user) })
-          .catch((error) => {
-            console.error(error);
-            res.status(500).send('Error: ' + error);
-          });
-      }
-    })
-    .catch((error) => {
-      console.error(error);
-      res.status(500).send('Error: ' + error);
-    });
-});
+    let hashedPassword = Users.hashPassword(req.body.Password);
+    Users.findOne({ Username: req.body.Username }) // Search to see if a user with the requested username already exists
+      .then((user) => {
+        if (user) {
+          //If the user is found, send a response that it already exists
+          return res.status(400).send(req.body.Username + ' already exists');
+        } else {
+          Users
+            .create({
+              Username: req.body.Username,
+              Password: hashedPassword,
+              Email: req.body.Email,
+              Birthday: req.body.Birthday
+            })
+            .then((user) => { res.status(201).json(user) })
+            .catch((error) => {
+              console.error(error);
+              res.status(500).send('Error: ' + error);
+            });
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        res.status(500).send('Error: ' + error);
+      });
+  });
 
 //DELETE
 
@@ -143,11 +135,31 @@ app.delete('/users/:Username/movies/:MovieID', passport.authenticate('jwt', { se
 //UPDATE 
 
 //update user info
-app.put('/users/:Username', passport.authenticate('jwt', { session: false }), (req, res) => {
+app.put(
+    '/users/:Username',
+    [
+      check('Username', 'Username is required').isLength({ min: 5 }),
+      check(
+        'Username',
+        'Username contains non alphanumeric characters - not allowed.'
+      ).isAlphanumeric(),
+      check('Password', 'Password is required').not().isEmpty(),
+      check('Email', 'Email does not appear to be valid').isEmail(),
+      passport.authenticate('jwt', { session: false }),
+    ],
+    (req, res) => {
+      // check validation object for errors
+      let errors = validationResult(req);
+  
+      if (!errors.isEmpty()) {
+        return res.status(422).json({ errors: errors.array() });
+      }
+      
+    let hashedPassword = Users.hashPassword(req.body.Password);
     Users.findOneAndUpdate({ Username: req.params.Username }, { $set:
       {
         Username: req.body.Username,
-        Password: req.body.Password,
+        Password: hashedPassword,
         Email: req.body.Email,
         Birthday: req.body.Birthday
       }
